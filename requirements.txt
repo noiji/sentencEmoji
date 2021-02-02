@@ -1,0 +1,3 @@
+azure-functions
+http.client
+google_trans_new
