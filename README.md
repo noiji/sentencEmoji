@@ -1,1 +1,2 @@
-"# multilingual_ssd_chatbot" 
+- modules/my_translator -> query language detection + translation ( Multilingual_Chatbot.ipynb 는 my_translator 모듈이 잘 동작하는지 확인하기 위한 테스트 코드입니다.)
+- HttpTrigger1_re/__init__.py -> https://towardsdatascience.com/creating-a-serverless-python-chatbot-api-in-microsoft-azure-from-scratch-in-9-easy-steps-2f1913fc9581 참고하여 구현.
