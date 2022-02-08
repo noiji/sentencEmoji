@@ -1,0 +1,96 @@
+2022-02-08T22:17:40,794 [INFO ] main org.pytorch.serve.servingsdk.impl.PluginsManager -  Loading snapshot serializer plugin...
+2022-02-08T22:17:40,794 [INFO ] main org.pytorch.serve.servingsdk.impl.PluginsManager -  Loading snapshot serializer plugin...
+2022-02-08T22:17:40,873 [INFO ] main org.pytorch.serve.servingsdk.impl.PluginsManager - Initializing plugins manager...
+2022-02-08T22:17:40,873 [INFO ] main org.pytorch.serve.servingsdk.impl.PluginsManager - Initializing plugins manager...
+2022-02-08T22:17:41,406 [INFO ] main org.pytorch.serve.ModelServer - 
+Torchserve version: 0.5.2
+TS Home: C:\Users\enoch9\AppData\Local\Continuum\anaconda3\Lib\site-packages
+Current directory: C:\Users\enoch9\Desktop\개발\sentencEmoji
+Temp directory: C:\Users\enoch9\AppData\Local\Temp
+Number of GPUs: 0
+Number of CPUs: 8
+Max heap size: 4046 M
+Python executable: c:\users\enoch9\appdata\local\continuum\anaconda3\python.exe
+Config file: N/A
+Inference address: http://127.0.0.1:8080
+Management address: http://127.0.0.1:8081
+Metrics address: http://127.0.0.1:8082
+Model Store: C:\Users\enoch9\Desktop\개발\sentencEmoji\model_store
+Initial Models: sentencemoji=sentencemoji.mar
+Log dir: C:\Users\enoch9\Desktop\개발\sentencEmoji\logs
+Metrics dir: C:\Users\enoch9\Desktop\개발\sentencEmoji\logs
+Netty threads: 0
+Netty client threads: 0
+Default workers per model: 8
+Blacklist Regex: N/A
+Maximum Response Size: 6553500
+Maximum Request Size: 6553500
+Limit Maximum Image Pixels: true
+Prefer direct buffer: false
+Allowed Urls: [file://.*|http(s)?://.*]
+Custom python dependency for model allowed: false
+Metrics report format: prometheus
+Enable metrics API: true
+Workflow Store: C:\Users\enoch9\Desktop\개발\sentencEmoji\model_store
+Model config: N/A
+2022-02-08T22:17:41,406 [INFO ] main org.pytorch.serve.ModelServer - 
+Torchserve version: 0.5.2
+TS Home: C:\Users\enoch9\AppData\Local\Continuum\anaconda3\Lib\site-packages
+Current directory: C:\Users\enoch9\Desktop\개발\sentencEmoji
+Temp directory: C:\Users\enoch9\AppData\Local\Temp
+Number of GPUs: 0
+Number of CPUs: 8
+Max heap size: 4046 M
+Python executable: c:\users\enoch9\appdata\local\continuum\anaconda3\python.exe
+Config file: N/A
+Inference address: http://127.0.0.1:8080
+Management address: http://127.0.0.1:8081
+Metrics address: http://127.0.0.1:8082
+Model Store: C:\Users\enoch9\Desktop\개발\sentencEmoji\model_store
+Initial Models: sentencemoji=sentencemoji.mar
+Log dir: C:\Users\enoch9\Desktop\개발\sentencEmoji\logs
+Metrics dir: C:\Users\enoch9\Desktop\개발\sentencEmoji\logs
+Netty threads: 0
+Netty client threads: 0
+Default workers per model: 8
+Blacklist Regex: N/A
+Maximum Response Size: 6553500
+Maximum Request Size: 6553500
+Limit Maximum Image Pixels: true
+Prefer direct buffer: false
+Allowed Urls: [file://.*|http(s)?://.*]
+Custom python dependency for model allowed: false
+Metrics report format: prometheus
+Enable metrics API: true
+Workflow Store: C:\Users\enoch9\Desktop\개발\sentencEmoji\model_store
+Model config: N/A
+2022-02-08T22:17:41,426 [INFO ] main org.pytorch.serve.ModelServer - Loading initial models: sentencemoji.mar
+2022-02-08T22:17:41,426 [INFO ] main org.pytorch.serve.ModelServer - Loading initial models: sentencemoji.mar
+2022-02-08T22:17:41,565 [DEBUG] main org.pytorch.serve.wlm.ModelVersionedRefs - Adding new version 1.0 for model sentencemoji
+2022-02-08T22:17:41,565 [DEBUG] main org.pytorch.serve.wlm.ModelVersionedRefs - Adding new version 1.0 for model sentencemoji
+2022-02-08T22:17:41,566 [DEBUG] main org.pytorch.serve.wlm.ModelVersionedRefs - Setting default version to 1.0 for model sentencemoji
+2022-02-08T22:17:41,566 [DEBUG] main org.pytorch.serve.wlm.ModelVersionedRefs - Setting default version to 1.0 for model sentencemoji
+2022-02-08T22:17:41,570 [INFO ] main org.pytorch.serve.wlm.ModelManager - Model sentencemoji loaded.
+2022-02-08T22:17:41,570 [INFO ] main org.pytorch.serve.wlm.ModelManager - Model sentencemoji loaded.
+2022-02-08T22:17:41,573 [DEBUG] main org.pytorch.serve.wlm.ModelManager - updateModel: sentencemoji, count: 8
+2022-02-08T22:17:41,573 [DEBUG] main org.pytorch.serve.wlm.ModelManager - updateModel: sentencemoji, count: 8
+2022-02-08T22:17:41,602 [DEBUG] W-9000-sentencemoji_1.0 org.pytorch.serve.wlm.WorkerLifeCycle - Worker cmdline: [c:\users\enoch9\appdata\local\continuum\anaconda3\python.exe, C:\Users\enoch9\AppData\Local\Continuum\anaconda3\Lib\site-packages\ts\model_service_worker.py, --sock-type, tcp, --port, 9000]
+2022-02-08T22:17:41,602 [DEBUG] W-9003-sentencemoji_1.0 org.pytorch.serve.wlm.WorkerLifeCycle - Worker cmdline: [c:\users\enoch9\appdata\local\continuum\anaconda3\python.exe, C:\Users\enoch9\AppData\Local\Continuum\anaconda3\Lib\site-packages\ts\model_service_worker.py, --sock-type, tcp, --port, 9003]
+2022-02-08T22:17:41,603 [DEBUG] W-9004-sentencemoji_1.0 org.pytorch.serve.wlm.WorkerLifeCycle - Worker cmdline: [c:\users\enoch9\appdata\local\continuum\anaconda3\python.exe, C:\Users\enoch9\AppData\Local\Continuum\anaconda3\Lib\site-packages\ts\model_service_worker.py, --sock-type, tcp, --port, 9004]
+2022-02-08T22:17:41,602 [DEBUG] W-9005-sentencemoji_1.0 org.pytorch.serve.wlm.WorkerLifeCycle - Worker cmdline: [c:\users\enoch9\appdata\local\continuum\anaconda3\python.exe, C:\Users\enoch9\AppData\Local\Continuum\anaconda3\Lib\site-packages\ts\model_service_worker.py, --sock-type, tcp, --port, 9005]
+2022-02-08T22:17:41,602 [DEBUG] W-9007-sentencemoji_1.0 org.pytorch.serve.wlm.WorkerLifeCycle - Worker cmdline: [c:\users\enoch9\appdata\local\continuum\anaconda3\python.exe, C:\Users\enoch9\AppData\Local\Continuum\anaconda3\Lib\site-packages\ts\model_service_worker.py, --sock-type, tcp, --port, 9007]
+2022-02-08T22:17:41,603 [DEBUG] W-9002-sentencemoji_1.0 org.pytorch.serve.wlm.WorkerLifeCycle - Worker cmdline: [c:\users\enoch9\appdata\local\continuum\anaconda3\python.exe, C:\Users\enoch9\AppData\Local\Continuum\anaconda3\Lib\site-packages\ts\model_service_worker.py, --sock-type, tcp, --port, 9002]
+2022-02-08T22:17:41,602 [DEBUG] W-9001-sentencemoji_1.0 org.pytorch.serve.wlm.WorkerLifeCycle - Worker cmdline: [c:\users\enoch9\appdata\local\continuum\anaconda3\python.exe, C:\Users\enoch9\AppData\Local\Continuum\anaconda3\Lib\site-packages\ts\model_service_worker.py, --sock-type, tcp, --port, 9001]
+2022-02-08T22:17:41,602 [DEBUG] W-9000-sentencemoji_1.0 org.pytorch.serve.wlm.WorkerLifeCycle - Worker cmdline: [c:\users\enoch9\appdata\local\continuum\anaconda3\python.exe, C:\Users\enoch9\AppData\Local\Continuum\anaconda3\Lib\site-packages\ts\model_service_worker.py, --sock-type, tcp, --port, 9000]
+2022-02-08T22:17:41,606 [INFO ] main org.pytorch.serve.ModelServer - Initialize Inference server with: NioServerSocketChannel.
+2022-02-08T22:17:41,606 [DEBUG] W-9006-sentencemoji_1.0 org.pytorch.serve.wlm.WorkerLifeCycle - Worker cmdline: [c:\users\enoch9\appdata\local\continuum\anaconda3\python.exe, C:\Users\enoch9\AppData\Local\Continuum\anaconda3\Lib\site-packages\ts\model_service_worker.py, --sock-type, tcp, --port, 9006]
+2022-02-08T22:17:41,602 [DEBUG] W-9005-sentencemoji_1.0 org.pytorch.serve.wlm.WorkerLifeCycle - Worker cmdline: [c:\users\enoch9\appdata\local\continuum\anaconda3\python.exe, C:\Users\enoch9\AppData\Local\Continuum\anaconda3\Lib\site-packages\ts\model_service_worker.py, --sock-type, tcp, --port, 9005]
+2022-02-08T22:17:41,603 [DEBUG] W-9004-sentencemoji_1.0 org.pytorch.serve.wlm.WorkerLifeCycle - Worker cmdline: [c:\users\enoch9\appdata\local\continuum\anaconda3\python.exe, C:\Users\enoch9\AppData\Local\Continuum\anaconda3\Lib\site-packages\ts\model_service_worker.py, --sock-type, tcp, --port, 9004]
+2022-02-08T22:17:41,606 [INFO ] main org.pytorch.serve.ModelServer - Initialize Inference server with: NioServerSocketChannel.
+2022-02-08T22:17:41,602 [DEBUG] W-9003-sentencemoji_1.0 org.pytorch.serve.wlm.WorkerLifeCycle - Worker cmdline: [c:\users\enoch9\appdata\local\continuum\anaconda3\python.exe, C:\Users\enoch9\AppData\Local\Continuum\anaconda3\Lib\site-packages\ts\model_service_worker.py, --sock-type, tcp, --port, 9003]
+2022-02-08T22:17:41,602 [DEBUG] W-9007-sentencemoji_1.0 org.pytorch.serve.wlm.WorkerLifeCycle - Worker cmdline: [c:\users\enoch9\appdata\local\continuum\anaconda3\python.exe, C:\Users\enoch9\AppData\Local\Continuum\anaconda3\Lib\site-packages\ts\model_service_worker.py, --sock-type, tcp, --port, 9007]
+2022-02-08T22:17:41,602 [DEBUG] W-9001-sentencemoji_1.0 org.pytorch.serve.wlm.WorkerLifeCycle - Worker cmdline: [c:\users\enoch9\appdata\local\continuum\anaconda3\python.exe, C:\Users\enoch9\AppData\Local\Continuum\anaconda3\Lib\site-packages\ts\model_service_worker.py, --sock-type, tcp, --port, 9001]
+2022-02-08T22:17:41,606 [DEBUG] W-9006-sentencemoji_1.0 org.pytorch.serve.wlm.WorkerLifeCycle - Worker cmdline: [c:\users\enoch9\appdata\local\continuum\anaconda3\python.exe, C:\Users\enoch9\AppData\Local\Continuum\anaconda3\Lib\site-packages\ts\model_service_worker.py, --sock-type, tcp, --port, 9006]
+2022-02-08T22:17:41,603 [DEBUG] W-9002-sentencemoji_1.0 org.pytorch.serve.wlm.WorkerLifeCycle - Worker cmdline: [c:\users\enoch9\appdata\local\continuum\anaconda3\python.exe, C:\Users\enoch9\AppData\Local\Continuum\anaconda3\Lib\site-packages\ts\model_service_worker.py, --sock-type, tcp, --port, 9002]
+2022-02-08T22:17:44,431 [INFO ] main org.pytorch.serve.ModelServer - Torchserve stopped.
+2022-02-08T22:17:44,431 [INFO ] main org.pytorch.serve.ModelServer - Torchserve stopped.
