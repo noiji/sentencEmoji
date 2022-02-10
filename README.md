@@ -13,12 +13,11 @@
 - 기존 아이폰/안드로이드폰 등에서는 단어 단위로 일치하는 이모지를 추천해준다. 하지만 우리는 단어 단위로 이모지를 문장 내 삽입하기 보다는 문장이 끝난 이후에 해당 문장 전체에 어울리는 이모지를 붙이는 것을 더 많이 볼 수 있다. 
 
 ## III. Data 🌈
-- Twitter API로 크롤링한 한국어 문장 (2200여개 문장)
-- Kaggle 영어 데이터 (https://www.kaggle.com/rexhaif/emojifydata-en/version/3?select=emojitweets-01-04-2018.txt) (18883592개 문장)
+- Twitter API로 크롤링한 2015년 ~ 2021년의 한국어 문장 (256,000여개)
 
 ## IV. 모델 설명 🙏
 - 문장을 x, 이모지를 label로 하여 주어진 문장에 어울리는 이모지 하나를 출력하는 multi-class classification 모델
-- KoBERT 모델 활용
+- KoELECTRA 모델 활용
 
 ## V. 활용될 수 있는 비즈니스 영역 💯
 

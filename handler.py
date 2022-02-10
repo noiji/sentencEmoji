@@ -8,6 +8,8 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 from ts.torch_handler.base_handler import BaseHandler
 
+from transformers import ElectraModel, ElectraTokenizer
+
 logger = logging.getLogger(__name__)
 
 
@@ -24,12 +26,18 @@ class TransformersClassifierHandler(BaseHandler, ABC):
         self.manifest = ctx.manifest
 
         properties = ctx.system_properties
+        print(properties)
+
         model_dir = properties.get("model_dir")
+        print(model_dir)
+
         self.device = torch.device("cuda:" + str(properties.get("gpu_id")) if torch.cuda.is_available() else "cpu")
 
         # Read model serialize/pt file
         self.model = AutoModelForSequenceClassification.from_pretrained(model_dir)
-        self.tokenizer = AutoTokenizer.from_pretrained(model_dir)
+        # self.tokenizer = AutoTokenizer.from_pretrained(model_dir)
+
+        self.tokenizer = ElectraTokenizer.from_pretrained("monologg/koelectra-base-discriminator")
 
         self.model.to(self.device)
         self.model.eval()
@@ -57,11 +65,16 @@ class TransformersClassifierHandler(BaseHandler, ABC):
         sentences = text.decode('utf-8')
         logger.info("Received text: '%s'", sentences)
 
-        inputs = self.tokenizer.encode_plus(
-            sentences,
-            add_special_tokens=True,
-            return_tensors="pt"
-        )
+        # inputs = self.tokenizer.encode_plus(
+        #     sentences,
+        #     add_special_tokens=True,
+        #     return_tensors="pt"
+        # )
+
+        inputs = self.tokenizer(
+            str(sentences),
+            return_tensors='pt')
+
         return inputs
 
     def inference(self, inputs):
@@ -84,6 +97,8 @@ class TransformersClassifierHandler(BaseHandler, ABC):
         return [prediction]
 
     def postprocess(self, inference_output):
+
+        #여기서 emoji class -> emoji random select 필요
         # TODO: Add any needed post-processing of the model predictions here
         return inference_output
 

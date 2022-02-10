@@ -18,14 +18,6 @@ from transformers import ElectraModel, ElectraTokenizer
 
 from sklearn.utils.class_weight import compute_class_weight
 
-#KoBERT
-# tokenizer = AutoTokenizer.from_pretrained("monologg/kobert")
-# model = AutoModel.from_pretrained("monologg/kobert")
-
-# KoELECTRA-Base
-tokenizer = ElectraTokenizer.from_pretrained("monologg/koelectra-base-discriminator")
-model = ElectraModel.from_pretrained("monologg/koelectra-base-discriminator")
-
 
 class sentencEmojiDataset(Dataset):
     def __init__(self, directory, tokenizer):
@@ -88,6 +80,68 @@ class collate_fn:
 
         return input_ids, token_type_ids, attention_mask, tensor_label
 
+
+class ELECTRAClassifier(nn.Module):
+    def __init__(self,
+                 electra,
+                 hidden_size=768,
+                 num_classes=2,
+                 dr_rate=None,
+                 params=None):
+
+        super(ELECTRAClassifier, self).__init__()
+
+        self.electra = electra
+
+        # do not train electra parameters
+        for p in self.electra.parameters():
+            p.requires_grad = False
+
+        self.dr_rate = dr_rate
+
+        # self.classifier = nn.Linear(hidden_size , num_classes)
+
+        #         # 방법 1 -> forward에서 처리해줘야 함.
+        #         self.classifier1 = nn.Linear(hidden_size, 100) # y = Wx
+        #         self.classifier2 = nn.Linear(100, num_classes) # z = Uy
+        #         #layer 추가 시 activation function을 주지 않으면 의미가 없음.
+        #         self.relu = nn.ReLU()
+
+        # 방법 2 -> forward에서 별도 처리 필요 X
+        self.classifier = nn.Sequential(nn.Linear(hidden_size, 100), nn.ReLU(), nn.Linear(100, num_classes))
+
+        if dr_rate:
+            self.dropout = nn.Dropout(p=dr_rate)
+
+    def forward(self, input_ids, token_type_ids, attention_mask):
+        # eval: drop out 중지, batch norm 고정과 같이 evaluation으로 모델 변경
+        self.electra.eval()
+
+        # gradient 계산을 중지
+        with torch.no_grad():
+            # ElectraModel은 pooled_output을 리턴하지 않는 것을 제외하고 BertModel과 유사합니다.
+            #            x = self.electra(input_ids=input_ids, token_type_ids=token_type_ids, attention_mask=attention_mask).pooler_output
+
+            x = self.electra(input_ids=input_ids, token_type_ids=token_type_ids,
+                             attention_mask=attention_mask).last_hidden_state[:, 0, :]
+            # .last_hidden_state[:, 0, :]: [batch , CLS 위치, depth]
+
+            # Sentence Embedding으로 무엇을 넣을까? CLS, average, ... (Bert의 경우에는 Sentence BERT라는 게 제안되었다고 함)
+
+        x = self.dropout(x)
+
+        return self.classifier(x)
+
+
+def calc_accuracy(X,Y):
+    max_vals, max_indices = torch.max(X, 1)
+    train_acc = (max_indices == Y).sum().data.cpu().numpy()/max_indices.size()[0]
+    return train_acc
+
+# KoELECTRA-Base
+tokenizer = ElectraTokenizer.from_pretrained("monologg/koelectra-base-discriminator")
+model = ElectraModel.from_pretrained("monologg/koelectra-base-discriminator")
+
 df = pd.read_csv('data/twitter_clean.csv', encoding="UTF-8")
 df['split'] = np.random.randn(df.shape[0], 1)
 msk = np.random.rand(len(df)) <= 0.7
@@ -116,58 +170,6 @@ learning_rate =  5e-3
 train_dataloader = DataLoader(train, batch_size=batch_size, collate_fn=train_collate_fn, shuffle = True, drop_last = True)
 test_dataloader = DataLoader(test, batch_size=batch_size, collate_fn=test_collate_fn, shuffle = False, drop_last = False)
 
-
-class ELECTRAClassifier(nn.Module):
-    def __init__(self,
-                 electra,
-                 hidden_size=768,
-                 num_classes=2,
-                 dr_rate=None,
-                 params=None):
-
-        super(ELECTRAClassifier, self).__init__()
-
-        self.electra = electra
-
-        # do not train electra parameters
-        for p in self.electra.parameters():
-            p.requires_grad = False
-
-        self.dr_rate = dr_rate
-
-        # self.classifier = nn.Linear(hidden_size , num_classes)
-
-        #         # 방법 1 -> forward에서 처리해줘야 함. 
-        #         self.classifier1 = nn.Linear(hidden_size, 100) # y = Wx
-        #         self.classifier2 = nn.Linear(100, num_classes) # z = Uy
-        #         #layer 추가 시 activation function을 주지 않으면 의미가 없음. 
-        #         self.relu = nn.ReLU()
-
-        # 방법 2 -> forward에서 별도 처리 필요 X
-        self.classifier = nn.Sequential(nn.Linear(hidden_size, 100), nn.ReLU(), nn.Linear(100, num_classes))
-
-        if dr_rate:
-            self.dropout = nn.Dropout(p=dr_rate)
-
-    def forward(self, input_ids, token_type_ids, attention_mask):
-        # eval: drop out 중지, batch norm 고정과 같이 evaluation으로 모델 변경
-        self.electra.eval()
-
-        # gradient 계산을 중지
-        with torch.no_grad():
-            # ElectraModel은 pooled_output을 리턴하지 않는 것을 제외하고 BertModel과 유사합니다.
-            #            x = self.electra(input_ids=input_ids, token_type_ids=token_type_ids, attention_mask=attention_mask).pooler_output
-
-            x = self.electra(input_ids=input_ids, token_type_ids=token_type_ids,
-                             attention_mask=attention_mask).last_hidden_state[:, 0, :]
-            # .last_hidden_state[:, 0, :]: [batch , CLS 위치, depth]
-
-            # Sentence Embedding으로 무엇을 넣을까? CLS, average, ... (Bert의 경우에는 Sentence BERT라는 게 제안되었다고 함)
-
-        x = self.dropout(x)
-
-        return self.classifier(x)
-
 label = list(set(list(df.iloc[:,1])))
 
 # model = BERTClassifier(model,  dr_rate=0.5, num_classes = len(label))
@@ -194,12 +196,6 @@ warmup_step = int(t_total * warmup_ratio)
 
 scheduler = get_cosine_schedule_with_warmup(optimizer, num_warmup_steps=warmup_step, num_training_steps=t_total)
 
-def calc_accuracy(X,Y):
-    max_vals, max_indices = torch.max(X, 1)
-    train_acc = (max_indices == Y).sum().data.cpu().numpy()/max_indices.size()[0]
-    return train_acc
-
-
 for e in range(num_epochs):
     train_acc = 0.0
     test_acc = 0.0
@@ -217,15 +213,24 @@ for e in range(num_epochs):
         batch_acc = calc_accuracy(out, tensor_label)
         train_acc += batch_acc
         loss_sum += loss.data.cpu().numpy()
-        # f batch_id % log_interval == 0:
+
         print("epoch {} batch id {}/{} loss {} train acc {}".format(e + 1, batch_id + 1, len(train_dataloader),
                                                                     loss.data.cpu().numpy(), batch_acc))
     print("epoch {} train acc {} loss mean {}".format(e + 1, train_acc / (batch_id + 1),
                                                       loss_sum / len(train_dataloader)))
     model.eval()
     with torch.no_grad():
-        for batch_id, (input_ids, token_type_ids, attention_mask, tensor_label) in tqdm(enumerate(test_dataloader),
-                                                                                        total=len(test_dataloader)):
+        for batch_id, (input_ids, token_type_ids, attention_mask, tensor_label) in enumerate(test_dataloader):
+
             out = model(input_ids, token_type_ids, attention_mask)
             test_acc += calc_accuracy(out, tensor_label)
     print("epoch {} test acc {}".format(e + 1, test_acc / (batch_id + 1)))
+
+    torch.save({
+        'epoch': num_epochs,
+        'model_state_dict': model.state_dict(),
+        'optimizer_state_dict': optimizer.state_dict(),
+        'loss': loss
+    }, 'pytorch_model.bin')
+
+    # torch.save(model.state_dict(), 'pytorch_model.bin')
