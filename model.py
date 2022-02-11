@@ -162,18 +162,19 @@ test_collate_fn = collate_fn(test.labels_dict)
 max_len = 64
 batch_size = 64
 warmup_ratio = 0.1
-num_epochs = 20
+# num_epochs = 20
+num_epochs = 100
 max_grad_norm = 1
 log_interval = 200
-learning_rate =  5e-3
+learning_rate = 1e-2
 
-train_dataloader = DataLoader(train, batch_size=batch_size, collate_fn=train_collate_fn, shuffle = True, drop_last = True)
-test_dataloader = DataLoader(test, batch_size=batch_size, collate_fn=test_collate_fn, shuffle = False, drop_last = False)
+train_dataloader = DataLoader(train, batch_size=batch_size, collate_fn=train_collate_fn, shuffle=True, drop_last=True)
+test_dataloader = DataLoader(test, batch_size=batch_size, collate_fn=test_collate_fn, shuffle=False, drop_last=False)
 
-label = list(set(list(df.iloc[:,1])))
+label = list(set(list(df.iloc[:, 1])))
 
 # model = BERTClassifier(model,  dr_rate=0.5, num_classes = len(label))
-model = ELECTRAClassifier(model,  dr_rate=0.2, num_classes = len(label))
+model = ELECTRAClassifier(model, dr_rate=0.2, num_classes=len(label))
 
 #optimizer와 schedule 설정
 no_decay = ['bias', 'LayerNorm.weight']
@@ -194,7 +195,9 @@ loss_fn = nn.CrossEntropyLoss(weight = class_weights, reduction = 'mean')
 t_total = len(train_dataloader) * num_epochs
 warmup_step = int(t_total * warmup_ratio)
 
-scheduler = get_cosine_schedule_with_warmup(optimizer, num_warmup_steps=warmup_step, num_training_steps=t_total)
+# scheduler = get_cosine_schedule_with_warmup(optimizer, num_warmup_steps=warmup_step, num_training_steps=t_total)
+
+prev_weight = None
 
 for e in range(num_epochs):
     train_acc = 0.0
@@ -213,7 +216,11 @@ for e in range(num_epochs):
         batch_acc = calc_accuracy(out, tensor_label)
         train_acc += batch_acc
         loss_sum += loss.data.cpu().numpy()
-
+        # if prev_weight is None:
+        #     prev_weight = model.classifier[2].weight.clone()
+        # else:
+        #     print(torch.sum(torch.abs(model.classifier[2].weight.grad)), torch.sum(torch.abs(prev_weight - model.classifier[2].weight)))
+        #     prev_weight = model.classifier[2].weight.clone()
         print("epoch {} batch id {}/{} loss {} train acc {}".format(e + 1, batch_id + 1, len(train_dataloader),
                                                                     loss.data.cpu().numpy(), batch_acc))
     print("epoch {} train acc {} loss mean {}".format(e + 1, train_acc / (batch_id + 1),
@@ -221,7 +228,6 @@ for e in range(num_epochs):
     model.eval()
     with torch.no_grad():
         for batch_id, (input_ids, token_type_ids, attention_mask, tensor_label) in enumerate(test_dataloader):
-
             out = model(input_ids, token_type_ids, attention_mask)
             test_acc += calc_accuracy(out, tensor_label)
     print("epoch {} test acc {}".format(e + 1, test_acc / (batch_id + 1)))
@@ -233,4 +239,4 @@ for e in range(num_epochs):
         'loss': loss
     }, 'pytorch_model.bin')
 
-    # torch.save(model.state_dict(), 'pytorch_model.bin')
+torch.save(model.state_dict(), 'bin/pytorch_model.bin')
