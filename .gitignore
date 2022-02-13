@@ -2,3 +2,6 @@ data/
 *.bin
 *.mar
 kaggle_translate.ipynb
+e
+logs/
+.ipynb_checkpoints/
