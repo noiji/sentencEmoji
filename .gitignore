@@ -5,3 +5,6 @@ kaggle_translate.ipynb
 e
 logs/
 .ipynb_checkpoints/
+test.py
+.idea/
+*.pt

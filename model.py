@@ -10,7 +10,7 @@ import pandas as pd
 import json
 import logging
 
-logging.basicConfig(filename = './logs/result_0216_2e-2.log', level=logging.INFO)
+logging.basicConfig(filename = './logs/result_0216_new_labels_1e-2.log', level=logging.INFO)
 
 #transformers
 from transformers import AdamW
@@ -96,7 +96,6 @@ class ELECTRAClassifier(nn.Module):
 
         self.electra = electra
 
-
         # # do not train electra parameters
         for p in self.electra.parameters():
             p.requires_grad = False
@@ -170,7 +169,7 @@ warmup_ratio = 0.1
 num_epochs = 20
 max_grad_norm = 1
 log_interval = 200
-learning_rate = 2e-2
+learning_rate = 1e-2
 
 train_dataloader = DataLoader(train, batch_size=batch_size, collate_fn=train_collate_fn, shuffle=True, drop_last=True)
 test_dataloader = DataLoader(test, batch_size=batch_size, collate_fn=test_collate_fn, shuffle=False, drop_last=False)
@@ -212,7 +211,9 @@ for e in range(num_epochs):
         optimizer.zero_grad()
 
         out = model(input_ids, token_type_ids, attention_mask)
-        loss = loss_fn(out, tensor_label)
+        # print("out: ", out)
+        # print("out[0].argmax().item()", out[0].argmax().item())
+        loss = loss_fn(out, tensor_label) # tensor_label: torch.tensor([sample['label'] for sample in batch])
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), max_grad_norm)
         optimizer.step()
@@ -242,11 +243,12 @@ for e in range(num_epochs):
     print("epoch {} test acc {}".format(e + 1, test_acc / (batch_id + 1)))
 
     torch.save({
+        'model': model, #0216 added
         'epoch': num_epochs,
         'model_state_dict': model.state_dict(),
         'optimizer_state_dict': optimizer.state_dict(),
         'loss': loss
-    }, 'pytorch_model.bin')
+    }, 'pytorch_model.pt')
 
 # torch.save(model.state_dict(), 'bin/pytorch_model.bin')
 
