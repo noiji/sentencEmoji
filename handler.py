@@ -4,7 +4,7 @@ import logging
 import os
 
 import torch
-from transformers import AutoModelForSequenceClassification, AutoTokenizer
+# from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 from ts.torch_handler.base_handler import BaseHandler
 
@@ -23,26 +23,32 @@ class TransformersClassifierHandler(BaseHandler, ABC):
         self.initialized = False
 
     def initialize(self, ctx):
-        self.manifest = ctx.manifest
-
-        properties = ctx.system_properties
-        print(properties)
-
-        model_dir = properties.get("model_dir")
-        print(model_dir)
-
-        self.device = torch.device("cuda:" + str(properties.get("gpu_id")) if torch.cuda.is_available() else "cpu")
+        logger.debug("Initializing...:)")
+        # self.manifest = ctx.manifest
+        #
+        # properties = ctx.system_properties
+        # print(properties)
+        #
+        # model_dir = properties.get("model_dir")
+        # print(model_dir)
+        #
+        # self.device = torch.device("cuda:" + str(properties.get("gpu_id")) if torch.cuda.is_available() else "cpu")
 
         # Read model serialize/pt file
-        self.model = AutoModelForSequenceClassification.from_pretrained(model_dir)
+        # self.model = AutoModelForSequenceClassification.from_pretrained(model_dir)
         # self.tokenizer = AutoTokenizer.from_pretrained(model_dir)
 
+        #####
+        model_dir = "C:/Users/enoch9/Desktop/개발/sentencEmoji"
+        self.device = torch.device("cpu")
         self.tokenizer = ElectraTokenizer.from_pretrained("monologg/koelectra-base-discriminator")
+        self.model = ElectraModel.from_pretrained("monologg/koelectra-base-discriminator")
+        ####
 
         self.model.to(self.device)
         self.model.eval()
 
-        logger.debug('Transformer model from path {0} loaded successfully'.format(model_dir))
+        logger.debug('!!!!!!!!Transformer model from path {0} loaded successfully!!!!!!'.format(model_dir))
 
         # Read the mapping file, index to object name
         mapping_file_path = os.path.join(model_dir, "index_to_name.json")
@@ -56,9 +62,13 @@ class TransformersClassifierHandler(BaseHandler, ABC):
         self.initialized = True
 
     def preprocess(self, data):
+        logger.debug("Preprocessing...:)")
+
         """ Very basic preprocessing code - only tokenizes.
             Extend with your own preprocessing steps as needed.
         """
+
+        #추후 여기서 sentence split 필요. json으로 불러오는 것 같은데 내 모델에도 동일할지?
         text = data[0].get("data")
         if text is None:
             text = data[0].get("body")
@@ -78,6 +88,7 @@ class TransformersClassifierHandler(BaseHandler, ABC):
         return inputs
 
     def inference(self, inputs):
+        logger.debug("Inferencing...:)")
         """
         Predict the class of a text using a trained transformer model.
         """
@@ -97,7 +108,7 @@ class TransformersClassifierHandler(BaseHandler, ABC):
         return [prediction]
 
     def postprocess(self, inference_output):
-
+        logger.debug("Postprocessing...:)")
         #여기서 emoji class -> emoji random select 필요
         # TODO: Add any needed post-processing of the model predictions here
         return inference_output
@@ -107,6 +118,7 @@ _service = TransformersClassifierHandler()
 
 
 def handle(data, context):
+    logger.debug("Handling...:)")
     try:
         if not _service.initialized:
             _service.initialize(context)

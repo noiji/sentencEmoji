@@ -8,6 +8,9 @@ import numpy as np
 from tqdm import tqdm, tqdm_notebook
 import pandas as pd
 import json
+import logging
+
+logging.basicConfig(filename = './logs/result_0216_2e-2.log', level=logging.INFO)
 
 #transformers
 from transformers import AdamW
@@ -93,7 +96,8 @@ class ELECTRAClassifier(nn.Module):
 
         self.electra = electra
 
-        # do not train electra parameters
+
+        # # do not train electra parameters
         for p in self.electra.parameters():
             p.requires_grad = False
 
@@ -114,8 +118,9 @@ class ELECTRAClassifier(nn.Module):
             self.dropout = nn.Dropout(p=dr_rate)
 
     def forward(self, input_ids, token_type_ids, attention_mask):
-        # eval: drop out 중지, batch norm 고정과 같이 evaluation으로 모델 변경
-        self.electra.eval()
+
+        # # eval: drop out 중지, batch norm 고정과 같이 evaluation으로 모델 변경
+        # self.electra.eval()
 
         # gradient 계산을 중지
         with torch.no_grad():
@@ -165,7 +170,7 @@ warmup_ratio = 0.1
 num_epochs = 20
 max_grad_norm = 1
 log_interval = 200
-learning_rate = 1e-2
+learning_rate = 2e-2
 
 train_dataloader = DataLoader(train, batch_size=batch_size, collate_fn=train_collate_fn, shuffle=True, drop_last=True)
 test_dataloader = DataLoader(test, batch_size=batch_size, collate_fn=test_collate_fn, shuffle=False, drop_last=False)
@@ -222,12 +227,17 @@ for e in range(num_epochs):
         #     prev_weight = model.classifier[2].weight.clone()
         print("epoch {} batch id {}/{} loss {} train acc {}".format(e + 1, batch_id + 1, len(train_dataloader),
                                                                     loss.data.cpu().numpy(), batch_acc))
-    print("epoch {} train acc {} loss mean {}".format(e + 1, train_acc / (batch_id + 1),
-                                                      loss_sum / len(train_dataloader)))
+
+    epoch_result = "epoch {} train acc {} loss mean {}".format(e + 1, train_acc / (batch_id + 1),
+                                                               loss_sum / len(train_dataloader))
+    logging.info(epoch_result)
+    print(epoch_result)
+
     model.eval()
     with torch.no_grad():
         for batch_id, (input_ids, token_type_ids, attention_mask, tensor_label) in enumerate(test_dataloader):
             out = model(input_ids, token_type_ids, attention_mask)
+
             test_acc += calc_accuracy(out, tensor_label)
     print("epoch {} test acc {}".format(e + 1, test_acc / (batch_id + 1)))
 
@@ -238,4 +248,11 @@ for e in range(num_epochs):
         'loss': loss
     }, 'pytorch_model.bin')
 
-torch.save(model.state_dict(), 'bin/pytorch_model.bin')
+# torch.save(model.state_dict(), 'bin/pytorch_model.bin')
+
+#TODO
+#1. Electra도 학습 대상에 포함
+#2. learning rate 늘리기
+
+#기록
+#0216: learning rate 1e-2 -> 2e-2로 늘림
